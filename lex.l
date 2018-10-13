@@ -2,6 +2,7 @@
 #include "parser.tab.h"
 #include "string.h"
 #include "def.h"
+#include "stdio.h"
 int yycolumn=1;
 #define YY_USER_ACTION yylloc.first_line=yylloc.last_line=yylineno; yylloc.last_column=yycolumn+yyleng-1; yycolumn+=yyleng;
 typedef union{
@@ -38,7 +39,7 @@ float ([0-9]*\.[0-9]+)|([0-9]+\.)
 "+"         {return PLUS;}
 "-"         {return MINUS;}
 "*"         {return STAR;}
-"/"         {return DIV;}
+"/"         {return DIV;}//为什么这个可以放在"//"前面？？"//"还可以放在.后面？？？
 "&&"        {return AND;}
 "||"        {return OR;}
 "!"         {return NOT;}
@@ -48,6 +49,8 @@ float ([0-9]*\.[0-9]+)|([0-9]+\.)
 "}"         {return RC;}
 [\n]        {yycolumn=1;}
 [ \r\t]     {} 
+(\/\/).*    {}//匹配注释//
+\/\*.*?\*\/ {}//匹配注释/**/ 有问题，贪婪方法无效？？？
 .           {printf("Error type A :Mysterious character \"%s\"\n\t at Line %d\n",yytext,yylineno);}
 %%
 

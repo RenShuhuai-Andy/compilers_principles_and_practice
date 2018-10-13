@@ -10,8 +10,8 @@ enum node_kind{EXT_DEF_LIST,EXT_VAR_DEF,FUNC_DEF,FUNC_DEC,EXT_DEC_LIST,PARAM_LIS
 //FUNC_DEF:函数定义
 //FUNC_DEC:函数声明？
 //EXT_DEC_LIST:外部声明列表？
-//PARAM_LIST:参数列表？
-//PARAM_DEC:参数声明？
+//PARAM_LIST:形参列表
+//PARAM_DEC:形参声明
 //VAR_DEF:变量定义
 //DEC_LIST:声明列表？
 //DEF_LIST:定义列表？
