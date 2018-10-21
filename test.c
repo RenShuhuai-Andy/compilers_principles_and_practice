@@ -1,4 +1,11 @@
-int a;//*dfdsuiayuh**FDFDJF*//fdsfiso*/
+int a[3];
+int main(){
+    
+}
+// int a;//*dfdsuiayuh**FDFDJF*//fdsfiso*/
+// a=0;
+// char c;
+// c='0';
 // int a,b,c;
 // float m,n;
 // int fibo(int a){

@@ -1,5 +1,5 @@
 #include "def.h"
-struct node * mknode(int kind,struct node *first,struct node *second, struct node *third,int pos ) {
+struct node * mknode(int kind,struct node *first,struct node *second, struct node *third,int pos) {
     struct node *T=(struct node *)malloc(sizeof(struct node));
     T->kind=kind;
     T->ptr[0]=first;
@@ -15,6 +15,9 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
     if (T){
 	    switch (T->kind){
             case EXT_DEF_LIST:  
+                // printf("%d",T->kind);
+                // printf("%d",T->ptr[0]->kind);
+                // printf("%d",T->ptr[1]->kind);
                 display(T->ptr[0],indent);//显示该外部定义列表中的第一个
                 display(T->ptr[1],indent);//显示该外部定义列表中的其它外部定义
                 break;
@@ -23,6 +26,14 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
                 display(T->ptr[0],indent+3);//显示外部变量类型
                 printf("%*c变量名：\n",indent+3,' ');
                 display(T->ptr[1],indent+6);//显示变量列表
+                break;
+            case STRUCT_SPECIFIER:
+                printf("find STRUCT_SPECIFIER");
+                break;
+            case STRUCT_DEF:
+                printf("%*c结构体： %s\n",indent,' ',T->type_id);
+                display(T->ptr[0],indent+3);
+                display(T->ptr[1],indent+3);
                 break;
             case TYPE:          
                 printf("%*c类型： %s\n",indent,' ',T->type_id);
@@ -50,7 +61,14 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
                 display(T->ptr[1],indent);
                 break;
             case PARAM_DEC:     
-                printf("%*c类型：%s, 参数名：%s\n", indent,' ',T->ptr[0]->type==INT?"int": "float",T->ptr[1]->type_id);//自己改
+                if(T->ptr[0]->type==INT)
+                    printf("%*c类型：%s, 参数名：%s\n", indent,' ',"int",T->ptr[1]->type_id);
+                if(T->ptr[0]->type==FLOAT)
+                    printf("%*c类型：%s, 参数名：%s\n", indent,' ',"float",T->ptr[1]->type_id);
+                if(T->ptr[0]->type==CHAR)
+                    printf("%*c类型：%s, 参数名：%s\n", indent,' ',"char",T->ptr[1]->type_id);
+                if(T->ptr[0]->type==DOUBLE)
+                    printf("%*c类型：%s, 参数名：%s\n", indent,' ',"double",T->ptr[1]->type_id);
                 break;
             case EXP_STMT:      
                 printf("%*c表达式语句：\n",indent,' ');
@@ -120,12 +138,23 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
             case ID:	        
                 printf("%*cID： %s\n",indent,' ',T->type_id);
                 break;
+            case ARRAY_DEF:
+                printf("%*c一维数组定义： \n",indent,' ');
+                display(T->ptr[0],indent+3);
+                printf("%*cSIZE: %d\n",indent,' ',T->type_id[0]);
+                break;
+            case TWO_ARRAY_DEF:
+                printf("%*c二维数组定义： \n",indent,' ');
+                display(T->ptr[0],indent+3);
+                printf("%*cSIZE: %d %d\n",indent,' ',T->type_id[0],T->type_id[1]);
             case INT:	        
                 printf("%*cINT：%d\n",indent,' ',T->type_int);
                 break;
             case FLOAT:	        
                 printf("%*cFLAOT：%f\n",indent,' ',T->type_float);
                 break;
+            case CHAR:
+                printf("%*cCHAR：%c\n",indent,' ',T->type_char);
             case ASSIGNOP:
             case AND:
             case OR:
@@ -138,6 +167,8 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
                 display(T->ptr[0],indent+3);
                 display(T->ptr[1],indent+3);
                 break;
+            case INC:
+            case DEC:
             case NOT:
             case UMINUS:    
                 printf("%*c%s\n",indent,' ',T->type_id);

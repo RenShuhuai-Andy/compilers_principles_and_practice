@@ -43,27 +43,34 @@
      ID = 259,
      RELOP = 260,
      TYPE = 261,
-     FLOAT = 262,
-     LP = 263,
-     RP = 264,
-     LC = 265,
-     RC = 266,
-     SEMI = 267,
-     COMMA = 268,
-     PLUS = 269,
-     MINUS = 270,
-     STAR = 271,
-     DIV = 272,
-     ASSIGNOP = 273,
-     AND = 274,
-     OR = 275,
-     NOT = 276,
-     IF = 277,
-     ELSE = 278,
-     WHILE = 279,
-     RETURN = 280,
-     UMINUS = 281,
-     LOWER_THEN_ELSE = 282
+     STRUCT = 262,
+     FLOAT = 263,
+     DOUBLE = 264,
+     CHAR = 265,
+     LP = 266,
+     RP = 267,
+     LB = 268,
+     RB = 269,
+     LC = 270,
+     RC = 271,
+     SEMI = 272,
+     COMMA = 273,
+     PLUS = 274,
+     MINUS = 275,
+     STAR = 276,
+     DIV = 277,
+     ASSIGNOP = 278,
+     AND = 279,
+     OR = 280,
+     NOT = 281,
+     IF = 282,
+     ELSE = 283,
+     WHILE = 284,
+     RETURN = 285,
+     INC = 286,
+     DEC = 287,
+     UMINUS = 288,
+     LOWER_THEN_ELSE = 289
    };
 #endif
 
@@ -78,13 +85,15 @@ typedef union YYSTYPE
 
     int type_int;
     float type_float;
+    double type_double;
+    char type_char;
     char type_id[32];
     struct node *ptr;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 88 "parser.tab.h"
+#line 97 "parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

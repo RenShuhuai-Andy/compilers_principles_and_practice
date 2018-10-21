@@ -8,6 +8,8 @@ int yycolumn=1;
 typedef union{
     int type_int;
     int type_float;
+    int type_double;
+    int type_char;
     char type_id[32];
     struct node *pr;
 }YYLVAL;
@@ -19,12 +21,19 @@ typedef union{
 id [A-Za-z][A-Za-z0-9]*
 int [0-9]+
 float ([0-9]*\.[0-9]+)|([0-9]+\.)
+double ([0-9]*\.[0-9]+)|([0-9]+\.)
+char '.'|[0-9]+
 
 %%
 {int}       {yylval.type_int=atoi(yytext);return INT;}
 {float}     {yylval.type_float=atof(yytext);return FLOAT;}
+{double}    {yylval.type_double=atof(yytext);return DOUBLE;}//{yylval.type_double=atod(yytext);return DOUBLE;}//有atod函数吗？
+{char}      {yylval.type_char=yytext[1];return CHAR;}//有问题
 "int"       {strcpy(yylval.type_id, yytext);return TYPE;}
 "float"     {strcpy(yylval.type_id, yytext);return TYPE;}
+"double"    {strcpy(yylval.type_id, yytext);return TYPE;}
+"char"      {strcpy(yylval.type_id, yytext);return TYPE;}
+"struct"    {strcpy(yylval.type_id, yytext);return STRUCT;}
 
 "return"    {return RETURN;}
 "if"        {return IF;}
@@ -36,15 +45,19 @@ float ([0-9]*\.[0-9]+)|([0-9]+\.)
 ","         {return COMMA;}
 ">"|"<"|">="|"<="|"=="|"!=" {strcpy(yylval.type_id, yytext);return RELOP;}
 "="         {return ASSIGNOP;}
+"++"        {return INC;}
 "+"         {return PLUS;}
+"--"        {return DEC;}
 "-"         {return MINUS;}
 "*"         {return STAR;}
-"/"         {return DIV;}//为什么这个可以放在"//"前面？？"//"还可以放在.后面？？？
+"/"         {return DIV;}//为什么这个可以放在"//"前面？？ "//"还可以放在.后面？？？
 "&&"        {return AND;}
 "||"        {return OR;}
 "!"         {return NOT;}
 "("         {return LP;}
 ")"         {return RP;}
+"["         {return LB;}
+"]"         {return RB;}
 "{"         {return LC;}
 "}"         {return RC;}
 [\n]        {yycolumn=1;}

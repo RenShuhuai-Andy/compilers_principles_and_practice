@@ -4,12 +4,16 @@
 #include "stdarg.h"
 #include "parser.tab.h"
 
-enum node_kind{EXT_DEF_LIST,EXT_VAR_DEF,FUNC_DEF,FUNC_DEC,EXT_DEC_LIST,PARAM_LIST,PARAM_DEC,VAR_DEF,DEC_LIST,DEF_LIST,COMP_STM,STM_LIST,EXP_STMT,IF_THEN,IF_THEN_ELSE,FUNC_CALL,ARGS,FUNCTION,PARAM,ARG,CALL,LABEL,GOTO,JLT,JLE,JGT,JGE,EQ,NEQ};
+enum node_kind{EXT_DEF_LIST,EXT_VAR_DEF,FUNC_DEF,FUNC_DEC,EXT_DEC_LIST,STRUCT_DEF,ARRAY_DEF,TWO_ARRAY_DEF,STRUCT_SPECIFIER,PARAM_LIST,PARAM_DEC,VAR_DEF,DEC_LIST,DEF_LIST,COMP_STM,STM_LIST,EXP_STMT,IF_THEN,IF_THEN_ELSE,FUNC_CALL,ARGS,FUNCTION,PARAM,ARG,CALL,LABEL,GOTO,JLT,JLE,JGT,JGE,EQ,NEQ};
 //EXT_DEF_LIST:外部定义列表
 //EXT_VAR_DEF:外部变量定义
 //FUNC_DEF:函数定义
 //FUNC_DEC:函数声明？
 //EXT_DEC_LIST:外部声明列表？
+//STRUCT_DEF:结构体定义
+//ARRAY_DEF:数组定义
+//TWO_ARRAY_DEF:二维数组定义
+//STRUCT_SPECIFIER:结构体的描述符
 //PARAM_LIST:形参列表
 //PARAM_DEC:形参声明
 //VAR_DEF:变量定义
@@ -44,6 +48,7 @@ struct opn{
         int   const_int;//整常数值，立即数
         float const_float;//浮点常数值，立即数
         char  const_char;//字符常数值，立即数
+        double const_double;//?????????????????????????????????????????????????????????????????????????????????
         char  id[33];//变量或临时变量的别名或标号字符串
     };
     int level;//变量的层号，0表示是全局变量，数据保存在静态数据区
@@ -62,6 +67,8 @@ struct node{//以下对结点属性定义没有考虑存储效率，只是简单
 		char type_id[33];//由标识符生成的叶结点
 		int type_int;//由整常数生成的叶结点
 		float type_float;//由浮点常数生成的叶结点
+        double type_double;//由双精度浮点数生成的叶节点
+        char type_char;//由字符生成的叶节点
 	};
     struct node *ptr[3];//子树指针，由kind确定有多少棵子树
     int level;//层号
