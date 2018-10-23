@@ -45,7 +45,7 @@ void display(struct node *,int);
 
 //%token定义终结符的语义值类型
 %token <type_int> INT//指定INT的语义值是type_int,由词法分析得到的数值
-%token <type_id> ID RELOP TYPE STRUCT//指定ID、RELOP、TYPE的语义值是type_id,由词法分析得到的标识符字符
+%token <type_id> ID RELOP TYPE//指定ID、RELOP、TYPE的语义值是type_id,由词法分析得到的标识符字符
 %token <type_float> FLOAT//指定FLOAT的语义是type_id,由词法分析得到的标识符字符串
 %token <type_double> DOUBLE
 %token <type_char> CHAR
@@ -59,13 +59,14 @@ void display(struct node *,int);
 //RC: }
 //SEMI: 分号
 //COMMA: 逗号
-%token PLUS MINUS STAR DIV ASSIGNOP AND OR NOT IF ELSE WHILE RETURN INC DEC
+%token PLUS MINUS STAR DIV ASSIGNOP AND OR NOT IF ELSE WHILE RETURN INC DEC STRUCT COMP_PLUS COMP_MINUS
 
 %left ASSIGNOP//赋值号=
 %left OR
 %left AND
 %left RELOP
 %left INC DEC
+%left COMP_PLUS COMP_MINUS
 %left PLUS MINUS
 %left STAR DIV
 %right UMINUS NOT
@@ -82,23 +83,23 @@ ExtDefList: {$$=NULL;}
         ;
 ExtDef: Specifier ExtDecList SEMI {$$=mknode(EXT_VAR_DEF,$1,$2,NULL,yylineno);}//该节点对应一个外部变量声明
         |Specifier FuncDec CompSt {$$=mknode(FUNC_DEF,$1,$2,$3,yylineno);}//该节点对应一个函数定义
-        |Specifier SEMI           {$$=mknode(STRUCT_DEF,$1,NULL,NULL,yylineno);}//该节点对应一个结构体定义
+        |Specifier SEMI           {$$=mknode(STRUCT_TYPE_DEF,$1,NULL,NULL,yylineno);}//该节点对应一个结构体定义
         |error SEMI               {$$=NULL;}
         ;
-StructSpecifier: STRUCT OptTag LC DefList RC {$$-mknode(STRUCT_DEF,$2,$4,NULL,yylineno);strcpy($$->type_id,$1);}
-        | STRUCT Tag {$$=mknode(STRUCT_DEF,$2,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
+StructSpecifier: STRUCT OptTag LC DefList RC {$$=mknode(STRUCT_DEF,$2,$4,NULL,yylineno);}
+        | STRUCT Tag {$$=mknode(STRUCT_VAR_DEF,$2,NULL,NULL,yylineno);}
         ;
 Specifier: TYPE {$$=mknode(TYPE,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);
         if(!strcmp($1,"int")) $$->type=INT;
         if(!strcmp($1,"float")) $$->type=FLOAT;
         if(!strcmp($1,"double")) $$->type=DOUBLE;
         if(!strcmp($1,"char")) $$->type=CHAR;}
-        | StructSpecifier {$$=mknode(STRUCT,$1,NULL,NULL,yylineno);}
+        | StructSpecifier {$$=mknode(STRUCT_SPECIFIER,$1,NULL,NULL,yylineno);}
         ;
-OptTag: ID {$$=mknode(ID,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
+OptTag: ID {$$=mknode(TAG,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
         | {printf("OptTag");$$=NULL;}
         ;
-Tag: ID {$$=mknode(ID,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
+Tag: ID {$$=mknode(TAG,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
         ;
 ExtDecList: VarDec {$$=$1;}//每一个EXT_DEFLIST的结点，其第一棵子树对应一个变量名(ID类型的结点)，第二棵子树对应剩下的外部变量名
         | VarDec COMMA ExtDecList {$$=mknode(EXT_DEC_LIST,$1,$3,NULL,yylineno);}
@@ -148,12 +149,16 @@ Exp: Exp ASSIGNOP Exp   {$$=mknode(ASSIGNOP,$1,$3,NULL,yylineno);strcpy($$->type
         | Exp DIV Exp   {$$=mknode(DIV,$1,$3,NULL,yylineno);strcpy($$->type_id,"DIV");}
         | LP Exp RP     {$$=$2;}
         | MINUS Exp %prec UMINUS   {$$=mknode(UMINUS,$2,NULL,NULL,yylineno);strcpy($$->type_id,"UMINUS");}
-        | Exp INC       {$$=mknode(INC,$1,NULL,NULL,yylineno);strcpy($$->type_id,"INC");}
-        | Exp DEC       {$$=mknode(DEC,$1,NULL,NULL,yylineno);strcpy($$->type_id,"DEC");}
+        | Exp COMP_PLUS Exp        {$$=mknode(COMP_PLUS,$1,$3,NULL,yylineno);strcpy($$->type_id,"COMP_PLUS");}
+        | Exp COMP_MINUS Exp        {$$=mknode(COMP_MINUS,$1,$3,NULL,yylineno);strcpy($$->type_id,"COMP_MINUS");}
+        | Exp INC       {$$=mknode(INC,$1,NULL,NULL,yylineno);strcpy($$->type_id,"PRE_INC");}
+        | Exp DEC       {$$=mknode(DEC,$1,NULL,NULL,yylineno);strcpy($$->type_id,"PRE_DEC");}
+        | INC Exp       {$$=mknode(INC,$2,NULL,NULL,yylineno);strcpy($$->type_id,"POST_INC");}
+        | DEC Exp       {$$=mknode(DEC,$2,NULL,NULL,yylineno);strcpy($$->type_id,"POST_DEC");}
         | NOT Exp       {$$=mknode(NOT,$2,NULL,NULL,yylineno);strcpy($$->type_id,"NOT");}
         | ID LP Args RP {$$=mknode(FUNC_CALL,$3,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
         | ID LP RP      {$$=mknode(FUNC_CALL,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
-        | Exp LB Exp RB {$$=mknode(ARRAY_DEF,NULL,NULL,NULL,yylineno);strcpy($$->type_id,"ARRAY_DEF");}
+        //| Exp LB Exp RB {$$=mknode(ARRAY_DEF,NULL,NULL,NULL,yylineno);strcpy($$->type_id,"ARRAY_DEF");}
         | ID            {$$=mknode(ID,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
         | INT           {$$=mknode(INT,NULL,NULL,NULL,yylineno);$$->type_int=$1;$$->type=INT;}
         | FLOAT         {$$=mknode(FLOAT,NULL,NULL,NULL,yylineno);$$->type_float=$1;$$->type=FLOAT;}

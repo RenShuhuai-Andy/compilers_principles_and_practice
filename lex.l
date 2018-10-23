@@ -46,8 +46,10 @@ char '.'|[0-9]+
 ">"|"<"|">="|"<="|"=="|"!=" {strcpy(yylval.type_id, yytext);return RELOP;}
 "="         {return ASSIGNOP;}
 "++"        {return INC;}
+"+="        {return COMP_PLUS;}
 "+"         {return PLUS;}
 "--"        {return DEC;}
+"-="        {return COMP_MINUS;}
 "-"         {return MINUS;}
 "*"         {return STAR;}
 "/"         {return DIV;}//为什么这个可以放在"//"前面？？ "//"还可以放在.后面？？？
@@ -63,7 +65,7 @@ char '.'|[0-9]+
 [\n]        {yycolumn=1;}
 [ \r\t]     {} 
 (\/\/).*    {}//匹配注释//
-\/\*.*?\*\/ {}//匹配注释/**/ 有问题，贪婪方法无效？？？
+\/\*.*?(\n)*\*\/ {}//匹配注释/**/ 有问题，贪婪方法无效？？？
 .           {printf("Error type A :Mysterious character \"%s\"\n\t at Line %d\n",yytext,yylineno);}
 %%
 

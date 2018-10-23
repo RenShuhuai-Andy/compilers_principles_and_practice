@@ -43,34 +43,36 @@
      ID = 259,
      RELOP = 260,
      TYPE = 261,
-     STRUCT = 262,
-     FLOAT = 263,
-     DOUBLE = 264,
-     CHAR = 265,
-     LP = 266,
-     RP = 267,
-     LB = 268,
-     RB = 269,
-     LC = 270,
-     RC = 271,
-     SEMI = 272,
-     COMMA = 273,
-     PLUS = 274,
-     MINUS = 275,
-     STAR = 276,
-     DIV = 277,
-     ASSIGNOP = 278,
-     AND = 279,
-     OR = 280,
-     NOT = 281,
-     IF = 282,
-     ELSE = 283,
-     WHILE = 284,
-     RETURN = 285,
-     INC = 286,
-     DEC = 287,
-     UMINUS = 288,
-     LOWER_THEN_ELSE = 289
+     FLOAT = 262,
+     DOUBLE = 263,
+     CHAR = 264,
+     LP = 265,
+     RP = 266,
+     LB = 267,
+     RB = 268,
+     LC = 269,
+     RC = 270,
+     SEMI = 271,
+     COMMA = 272,
+     PLUS = 273,
+     MINUS = 274,
+     STAR = 275,
+     DIV = 276,
+     ASSIGNOP = 277,
+     AND = 278,
+     OR = 279,
+     NOT = 280,
+     IF = 281,
+     ELSE = 282,
+     WHILE = 283,
+     RETURN = 284,
+     INC = 285,
+     DEC = 286,
+     STRUCT = 287,
+     COMP_PLUS = 288,
+     COMP_MINUS = 289,
+     UMINUS = 290,
+     LOWER_THEN_ELSE = 291
    };
 #endif
 
@@ -93,7 +95,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 97 "parser.tab.h"
+#line 99 "parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

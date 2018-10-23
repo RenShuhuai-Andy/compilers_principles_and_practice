@@ -15,9 +15,6 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
     if (T){
 	    switch (T->kind){
             case EXT_DEF_LIST:  
-                // printf("%d",T->kind);
-                // printf("%d",T->ptr[0]->kind);
-                // printf("%d",T->ptr[1]->kind);
                 display(T->ptr[0],indent);//显示该外部定义列表中的第一个
                 display(T->ptr[1],indent);//显示该外部定义列表中的其它外部定义
                 break;
@@ -28,10 +25,19 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
                 display(T->ptr[1],indent+6);//显示变量列表
                 break;
             case STRUCT_SPECIFIER:
-                printf("find STRUCT_SPECIFIER");
+                // printf("%*c结构体描述符： \n",indent,' ');
+                display(T->ptr[0],indent+3);
+                break;
+            case STRUCT_TYPE_DEF:
+                printf("%*c结构体类型： \n",indent,' ');
+                display(T->ptr[0],indent+3);
+                break;
+            case STRUCT_VAR_DEF:
+                printf("%*c结构体变量： \n",indent,' ');
+                display(T->ptr[0],indent+3);
                 break;
             case STRUCT_DEF:
-                printf("%*c结构体： %s\n",indent,' ',T->type_id);
+                printf("%*c结构体： \n",indent,' ');
                 display(T->ptr[0],indent+3);
                 display(T->ptr[1],indent+3);
                 break;
@@ -138,6 +144,10 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
             case ID:	        
                 printf("%*cID： %s\n",indent,' ',T->type_id);
                 break;
+            case TAG:
+                // printf("%*cTAG： \n",indent,' ');
+                printf("%*c结构体变量名： %s\n",indent,' ',T->type_id);
+                break;
             case ARRAY_DEF:
                 printf("%*c一维数组定义： \n",indent,' ');
                 display(T->ptr[0],indent+3);
@@ -147,6 +157,7 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
                 printf("%*c二维数组定义： \n",indent,' ');
                 display(T->ptr[0],indent+3);
                 printf("%*cSIZE: %d %d\n",indent,' ',T->type_id[0],T->type_id[1]);
+                break;
             case INT:	        
                 printf("%*cINT：%d\n",indent,' ',T->type_int);
                 break;
@@ -155,10 +166,13 @@ void display(struct node *T,int indent){//对抽象语法树的先根遍历,inde
                 break;
             case CHAR:
                 printf("%*cCHAR：%c\n",indent,' ',T->type_char);
+                break;
             case ASSIGNOP:
             case AND:
             case OR:
             case RELOP:
+            case COMP_PLUS:
+            case COMP_MINUS:
             case PLUS:
             case MINUS:
             case STAR:
