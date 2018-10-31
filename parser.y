@@ -8,7 +8,7 @@
 extern int yylineno;
 extern char *yytext;
 extern FILE *yyin;
-void yyerror(const char* fmt, ...);//???
+void yyerror(const char* fmt, ...);//可变长参数
 void display(struct node *,int);
 %}
 
@@ -30,7 +30,7 @@ void display(struct node *,int);
 //Specifier: 类型描述符
 //ExtDecList: 零个或多个VarDec
 //FuncDec: 函数头
-//CompSt: 函数体、由花括号括起来的语句块
+//CompSt: 函数体、由花括号括起来的语句块, 即复合语句
 //VarList: 形参列表
 //VarDec: 一个变量的定义
 //ParamDec: 一个形参的定义
@@ -76,7 +76,8 @@ void display(struct node *,int);
 
 %%
 
-program: ExtDefList {display($1,0);}//semantic_Analysis0($1);}//显示语法树，语义分析。display在ast.c中定义，semantic_Analysis0在def.h中定义
+// program: ExtDefList {display($1,0);semantic_Analysis0($1);}//显示语法树，语义分析。display在ast.c中定义，semantic_Analysis0在def.h中定义
+program: ExtDefList {semantic_Analysis0($1);}//显示语法树，语义分析。display在ast.c中定义，semantic_Analysis0在def.h中定义
         ;
 ExtDefList: {$$=NULL;}
         |ExtDef ExtDefList {$$=mknode(EXT_DEF_LIST,$1,$2,NULL,yylineno);}//每一个EXT_DEF_LIST的节点，其第一棵子树对应一个外部变量声明或函数
@@ -105,8 +106,8 @@ ExtDecList: VarDec {$$=$1;}//每一个EXT_DEFLIST的结点，其第一棵子树�
         | VarDec COMMA ExtDecList {$$=mknode(EXT_DEC_LIST,$1,$3,NULL,yylineno);}
         ;
 VarDec: ID {$$=mknode(ID,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}//ID结点，标识符符号串存放节点的type_id
-        | VarDec LB INT RB {$$=mknode(ARRAY_DEF,$1,NULL,NULL,yylineno);$$->type_id[0]=$3;}//一维数组
-        | VarDec LB INT RB LB INT RB {$$=mknode(TWO_ARRAY_DEF,$1,NULL,NULL,yylineno);$$->type_id[0]=$3;$$->type_id[1]=$6}//二维数组
+        | VarDec LB INT RB {$$=mknode(ARRAY_DEF,$1,NULL,NULL,yylineno);$$->array_size[0]=$3;}//一维数组
+        | VarDec LB INT RB LB INT RB {$$=mknode(TWO_ARRAY_DEF,$1,NULL,NULL,yylineno);$$->array_size[0]=$3;$$->array_size[1]=$6;}//二维数组
         ;
 FuncDec: ID LP VarList RP {$$=mknode(FUNC_DEC,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}//函数名存放在$$->type_id
         |ID LP RP         {$$=mknode(FUNC_DEC,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}//函数名存放在$$->type_id

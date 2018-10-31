@@ -73,6 +73,7 @@ struct node{//以下对结点属性定义没有考虑存储效率，只是简单
 		float type_float;//由浮点常数生成的叶结点
         double type_double;//由双精度浮点数生成的叶节点
         char type_char;//由字符生成的叶节点
+        int array_size[2];//数组大小
 	};
     struct node *ptr[3];//子树指针，由kind确定有多少棵子树
     int level;//层号
@@ -85,6 +86,7 @@ struct node{//以下对结点属性定义没有考虑存储效率，只是简单
     int pos;//语法单位所在位置行号
     int offset;//偏移量
     int width;//占数据字节数
+    int num;//参数个数
 };
 
 struct symbol{//这里只列出了一个符号表项的部分属性，没考虑属性间的互斥
@@ -97,17 +99,17 @@ struct symbol{//这里只列出了一个符号表项的部分属性，没考虑�
     char offset;//外部变量和局部变量在其静态数据区或活动记录中的偏移量
 				//或函数活动记录大小，目标代码生成时使用
     //其它...
-    };
+};
 
 //符号表，是一个顺序栈，index初值为0
 struct symboltable{
     struct symbol symbols[MAXLENGTH];
-    int index;
+    int index;//栈顶指针
 }symbolTable;
 
-struct symbol_scope_begin{/*当前作用域的符号在符号表的起始位置序号,这是一个栈结构，/每到达一个复合语句，将符号表的index值进栈，离开复合语句时，取其退栈值修改符号表的index值，完成删除该复合语句中的所有变量和临时变量*/
+struct symbol_scope_begin{/*当前作用域的符号在符号表的起始位置序号,这是一个栈结构。每到达一个复合语句，将符号表的index值进栈，离开复合语句时，取其退栈值修改符号表的index值，完成删除该复合语句中的所有变量和临时变量*/
     int TX[30];
-    int top;
+    int top;//代表什么？？？？？？？？？？？？？？？？？？？？？
 } symbol_scope_TX;
 
 
